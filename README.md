@@ -17,7 +17,7 @@ The project is largely inspired by Atom's remote-sync plugin.
 {
   "warmpool/nvim-remote-sync",
   config = function()
-    require("remote-sync").setup()
+    require("remote-sync")
   end,
 }
 ```
@@ -28,7 +28,7 @@ The project is largely inspired by Atom's remote-sync plugin.
 use {
   "warmpool/nvim-remote-sync",
   config = function()
-    require("remote-sync").setup()
+    require("remote-sync")
   end,
 }
 ```
