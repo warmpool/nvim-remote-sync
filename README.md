@@ -1,6 +1,7 @@
-# nvim-push
+# nvim-remote-sync
 
 A Neovim plugin that automatically syncs files to a remote server via `rsync` on save.
+The project is largely inspired by Atom's remote-sync plugin.
 
 ## Requirements
 
@@ -14,10 +15,9 @@ A Neovim plugin that automatically syncs files to a remote server via `rsync` on
 
 ```lua
 {
-  "warmpool/nvim-push",
-  ft = "*", -- or load on specific filetypes
+  "warmpool/nvim-remote-sync",
   config = function()
-    require("nvim-push").setup()
+    require("remote-sync").setup()
   end,
 }
 ```
@@ -26,29 +26,33 @@ A Neovim plugin that automatically syncs files to a remote server via `rsync` on
 
 ```lua
 use {
-  "warmpool/nvim-push",
+  "warmpool/nvim-remote-sync",
   config = function()
-    require("nvim-push").setup()
+    require("remote-sync").setup()
   end,
 }
 ```
 
 ## Usage
 
-On first run, the plugin will prompt you to configure remote server details. The configuration can be saved to a `.nvim-push.json` file in your project root.
+Call `:RemoteSync` to start the plugin. On first run, you will be prompted to configure remote server details. The configuration can be saved to a `.remote-sync.json` file in your project root. The syncing status can be presented in lualine.
 
 ### Commands
 
 | Command | Description |
 |---------|-------------|
-| `:Nvimpush` | Setup and sync the current file |
-| `:Nvimpush setup` | Initialize/reconfigure the plugin |
-| `:Nvimpush sync` | Manually sync the current file |
-| `:Nvimpush showconfig` | Display current configuration |
+| `:RemoteSync` | Setup and sync the current file |
+| `:RemoteSync setup` | Initialize/reconfigure the plugin |
+| `:RemoteSync sync` | Manually sync the current file |
+| `:RemoteSync showconfig` | Display current configuration |
 
 ### Auto-sync
 
 Files are automatically synced via rsync whenever you save (`BufWritePost`).
+
+### Status
+
+The plugin tracks sync status which can be one of: `off`, `ready`, `syncing..`, `synced`, or `error`.
 
 ### Lualine Integration
 
@@ -58,7 +62,7 @@ Add the push status to your lualine:
 require("lualine").setup({
   sections = {
     lualine_x = {
-      require("nvim-push").lualine_component(),
+      require("remote-sync").lualine_component(),
     },
   },
 })
@@ -66,7 +70,7 @@ require("lualine").setup({
 
 ## Configuration
 
-The plugin stores its config in `.nvim-push.json` at the project root:
+The plugin stores its config in `.remote-sync.json` at the project root:
 
 ```json
 {
@@ -92,4 +96,13 @@ The plugin finds the project root by looking for a git repository root, falling 
 
 ## Log Files
 
-Logs are written to `vim.fn.stdpath("data")/nvim-push.log`.
+Logs are written to `vim.fn.stdpath("data")/remote-sync.log`.
+
+## Related projects
+
+- [amitds1997/remote-nvim.nvim](https://github.com/amitds1997/remote-nvim.nvim)
+- [coffebar/transfer.nvim](https://github.com/coffebar/transfer.nvim)
+- [chipsenkbeil/distant.nvim](https://github.com/chipsenkbeil/distant.nvim)
+- [inhesrom/remote-ssh.nvim](https://github.com/inhesrom/remote-ssh.nvim)
+- [KenN7/vim-arsync](https://github.com/KenN7/vim-arsync)
+- [OscarCreator/rsync.nvim](https://github.com/OscarCreator/rsync.nvim)

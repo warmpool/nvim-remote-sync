@@ -1,7 +1,7 @@
-local push = require("nvim-push")
-local log = require("nvim-push.log")
+local push = require("remote-sync")
+local log = require("remote-sync.log")
 
-vim.api.nvim_create_user_command("Nvimpush", function(opts)
+vim.api.nvim_create_user_command("RemoteSync", function(opts)
   if #opts.fargs == 0 then
     push.setup()
     local filepath = vim.api.nvim_buf_get_name(0)
@@ -12,7 +12,7 @@ vim.api.nvim_create_user_command("Nvimpush", function(opts)
     push.rsync_file(filepath)
     return
   elseif #opts.fargs > 1 then
-    log.warn("Usage: Nvimpush <setup|sync|showconfig> (default: setup)")
+    log.warn("Usage: RemoteSync <setup|sync|showconfig> (default: setup)")
     return
   end
 
@@ -29,10 +29,10 @@ vim.api.nvim_create_user_command("Nvimpush", function(opts)
     end
     push.rsync_file(filepath)
   else
-    log.warn("Usage: Nvimpush <setup|sync|showconfig> (default: setup)")
+    log.warn("Usage: RemoteSync <setup|sync|showconfig> (default: setup)")
   end
 end, {
-  desc = "nvim-push commands",
+  desc = "remote-sync commands",
   nargs = "?",
   complete = function()
     return { "setup", "sync", "showconfig" }

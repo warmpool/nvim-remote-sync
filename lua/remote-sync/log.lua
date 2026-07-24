@@ -1,6 +1,6 @@
 local M = {}
 
-local log_path = vim.fn.stdpath("data") .. "/nvim-push.log"
+local log_path = vim.fn.stdpath("data") .. "/remote-sync.log"
 
 local level_names = {
   [vim.log.levels.DEBUG] = "DEBUG",

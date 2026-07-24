@@ -1,5 +1,5 @@
-local config = require("nvim-push.config")
-local log = require("nvim-push.log")
+local config = require("remote-sync.config")
+local log = require("remote-sync.log")
 
 local M = {}
 
@@ -39,7 +39,7 @@ function M.rsync_file(filepath)
     return
   end
 
-  set_status("synced")
+  set_status("syncing..")
 
   local root = state.root
   local cfg = state.config
@@ -81,10 +81,10 @@ function M.rsync_file(filepath)
     vim.schedule(function()
       if code == 0 then
         set_status("synced")
-        log.info("Pushed: " .. rel)
+        log.info("Synced: " .. rel)
       else
         set_status("error")
-        log.error("Push failed (" .. rel .. "): " .. stderr_output)
+        log.error("Sync failed (" .. rel .. "): " .. stderr_output)
       end
     end)
   end)
@@ -116,12 +116,12 @@ end
 
 function M.showconfig()
   if not state.config then
-    print("nvim-push: config is not setup yet")
+    print("remote-sync: config is not setup yet")
     return
   end
   local cfg = state.config
   local lines = {
-    "nvim-push config:",
+    "remote-sync config:",
     "  project root: " .. (state.root or "not set"),
     "  remote_host:  " .. (cfg.remote_host or "not set"),
     "  remote_dir:   " .. (cfg.remote_dir or "not set"),

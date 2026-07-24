@@ -1,7 +1,7 @@
-local log = require("nvim-push.log")
+local log = require("remote-sync.log")
 local M = {}
 
-local config_filename = ".nvim-push.json"
+local config_filename = ".remote-sync.json"
 
 local required_fields = { "remote_host", "remote_dir" }
 
