@@ -1,7 +1,28 @@
 # nvim-remote-sync
 
-A Neovim plugin that automatically syncs files to a remote server via `rsync` on save.
-The project is largely inspired by Atom's remote-sync plugin.
+A Neovim plugin that automatically syncs local files to a remote server via `rsync` on save. Edit locally for a smooth, lag-free experience while keeping your remote project up to date.
+Inspired by Atom's plugin.
+
+## Why?
+
+When working on remote machines, you may experience:
+- **Network latency** — overseas hosts or unstable connections (e.g., on a train)
+- **Slow UI rendering** — some HPC clusters throttle Neovim's terminal rendering
+
+This plugin lets you edit code locally and push changes on save via `rsync`, giving you the best of both worlds: a fast local editor and a always-in-sync remote copy.
+
+## Key Features
+
+- **Auto-sync on save** — files are synced automatically via `BufWritePost`
+- **Async transfers** — non-blocking rsync via `vim.uv.spawn()`, editor stays responsive
+- **Interactive setup** — first-run wizard prompts for remote host, directory, SSH port, and key
+- **Persistent config** — settings saved to `.remote-sync.json` at project root
+- **Lualine integration** — display sync status (`off`, `ready`, `syncing..`, `synced`, `error`)
+- **Logging** — dual output to `vim.notify` and a persistent log file
+
+### Limitations
+1. Similar environments are requilred on local and remote for LSP to work properly.
+2. You get 2 copies of the same code here and there. Bad for version control but good for backup.
 
 ## Requirements
 
