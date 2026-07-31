@@ -1,6 +1,6 @@
 # nvim-remote-sync
 
-A Neovim plugin that automatically syncs local files to a remote server via `rsync` on save. Edit locally for a smooth, lag-free experience while keeping your remote project up to date.
+A Neovim plugin that syncs local files to a remote server via `rsync`. Edit locally for a smooth, lag-free experience while keeping your remote project up to date.
 Inspired by Atom's plugin.
 
 ## Why?
@@ -13,15 +13,16 @@ This plugin lets you edit code locally and push changes on save via `rsync`, giv
 
 ## Key Features
 
-- **Auto-sync on save** — files are synced automatically via `BufWritePost`
+- **Auto-sync on save** — files are synced automatically via `BufWritePost` (toggleable, off by default)
 - **Async transfers** — non-blocking rsync via `vim.uv.spawn()`, editor stays responsive
 - **Interactive setup** — first-run wizard prompts for remote host, directory, SSH port, and key
 - **Persistent config** — settings saved to `.remote-sync.json` at project root
+- **Toggleable autocmd** — enable/disable auto-sync at any time with `:RemoteSync toggle`
 - **Lualine integration** — display sync status (`off`, `ready`, `syncing..`, `synced`, `error`)
 - **Logging** — dual output to `vim.notify` and a persistent log file
 
 ### Limitations
-1. Similar environments are requilred on local and remote for LSP to work properly.
+1. Similar environments are required on local and remote for LSP to work properly.
 2. You get 2 copies of the same code here and there. Bad for version control but good for backup.
 
 ## Requirements
@@ -56,20 +57,23 @@ use {
 
 ## Usage
 
-Call `:RemoteSync` to start the plugin. On first run, you will be prompted to configure remote server details. The configuration can be saved to a `.remote-sync.json` file in your project root. The syncing status can be presented in lualine.
+The plugin provides the `:RemoteSync` command with several subcommands. On first run you will be prompted to configure remote server details. Configuration can be saved to a `.remote-sync.json` file in your project root.
 
 ### Commands
 
 | Command | Description |
 |---------|-------------|
-| `:RemoteSync` | Setup and sync the current file |
-| `:RemoteSync setup` | Initialize/reconfigure the plugin |
+| `:RemoteSync` | Full setup: configure, show config, enable auto-sync, and sync current file |
+| `:RemoteSync setup` | Initialize or reconfigure the plugin |
 | `:RemoteSync sync` | Manually sync the current file |
 | `:RemoteSync showconfig` | Display current configuration |
+| `:RemoteSync toggle` | Toggle auto-sync on save on/off |
 
 ### Auto-sync
 
-Files are automatically synced via rsync whenever you save (`BufWritePost`).
+Auto-sync on save is **off by default**. Enable it by running `:RemoteSync` (full setup) or `:RemoteSync toggle`. Run `:RemoteSync toggle` again to disable it.
+
+While enabled, files are automatically synced via rsync whenever you save (`BufWritePost`).
 
 ### Status
 
@@ -77,7 +81,7 @@ The plugin tracks sync status which can be one of: `off`, `ready`, `syncing..`, 
 
 ### Lualine Integration
 
-Add the push status to your lualine:
+Add the sync status to your lualine:
 
 ```lua
 require("lualine").setup({
@@ -87,6 +91,12 @@ require("lualine").setup({
     },
   },
 })
+```
+
+The status is displayed with an `rs:` prefix (e.g. `rs:ready`, `rs:synced`). You can customize the prefix by passing a string argument:
+
+```lua
+require("remote-sync").lualine_component("sync:")
 ```
 
 ## Configuration
