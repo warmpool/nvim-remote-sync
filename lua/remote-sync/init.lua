@@ -13,10 +13,11 @@ function M.get_status()
   return state.status
 end
 
-function M.lualine_component()
+function M.lualine_component(prefix)
+  prefix = prefix or 'rs:'
   return function()
     local status = state.status
-    return "p:" .. status
+    return prefix .. status
   end
 end
 
@@ -40,7 +41,6 @@ function M.rsync_file(filepath)
   end
 
   set_status("syncing..")
-
   local root = state.root
   local cfg = state.config
   local rel = relative_path(root, filepath)
@@ -114,6 +114,15 @@ function M.rsync_file(filepath)
   end
 end
 
+function M.rsync_curr_file()
+  local filepath = vim.api.nvim_buf_get_name(0)
+  if filepath == "" then
+    log.warn("No file to sync")
+    return
+  end
+  M.rsync_file(filepath)
+end
+
 function M.showconfig()
   if not state.config then
     print("remote-sync: config is not setup yet")
@@ -140,7 +149,6 @@ function M.setup()
   if cfg then
     state.config = cfg
     set_status('ready')
-    M.showconfig()
     return
   end
 
@@ -160,8 +168,37 @@ function M.setup()
     end
     state.config = new_cfg
     set_status('ready')
-    M.showconfig()
   end)
+end
+
+-- auto command
+
+local autocmd_id = nil
+local function autocmd_on()
+  return vim.api.nvim_create_autocmd("BufWritePost", {
+    group = vim.api.nvim_create_augroup("RemoteSync", { clear = true }),
+    callback = function(args)
+      local filepath = vim.api.nvim_buf_get_name(args.buf)
+      if filepath == "" then
+        return
+      end
+      M.rsync_file(filepath)
+    end,
+    desc = "Rsync file on save",
+  })
+end
+
+function M.toggle_autocmd()
+  if autocmd_id == nil then
+    autocmd_id = autocmd_on()
+    log.info('autocmd on id=(' .. autocmd_id .. ')')
+    set_status('ready')
+  else
+    vim.api.nvim_del_autocmd(autocmd_id)
+    autocmd_id = nil
+    log.info('autocmd off')
+    set_status('off')
+  end
 end
 
 return M

@@ -1,52 +1,67 @@
-local push = require("remote-sync")
+local rsync = require("remote-sync")
 local log = require("remote-sync.log")
 
-vim.api.nvim_create_user_command("RemoteSync", function(opts)
+local subcmds = {
+  setup = 'setup',
+  sync = 'sync',
+  showconfig = 'showconfig',
+  toggle = 'toggle'
+}
+
+local function user_command(opts)
+  -- validate sub command
+  local valid_subcmd = false
+  local subcmd = ''
   if #opts.fargs == 0 then
-    push.setup()
-    local filepath = vim.api.nvim_buf_get_name(0)
-    if filepath == "" then
-      log.warn("No file to sync")
-      return
+    -- no input is given
+    valid_subcmd = true
+  elseif #opts.fargs == 1 then
+    subcmd = opts.fargs[1]
+    -- only 1 valid input
+    for _, s in pairs(subcmds) do
+      if subcmd == s then
+        valid_subcmd = true
+        break
+      end
     end
-    push.rsync_file(filepath)
-    return
-  elseif #opts.fargs > 1 then
-    log.warn("Usage: RemoteSync <setup|sync|showconfig> (default: setup)")
+  end
+
+  if not valid_subcmd then
+    local usage = ''
+    for _, s in pairs(subcmds) do
+      usage = usage .. s .. '|'
+    end
+    usage = usage:sub(1, #usage - 1)
+    log.warn("Usage: RemoteSync <" .. usage .. "> (default: setup)")
     return
   end
 
-  local subcmd = opts.fargs[1]
-  if subcmd == "setup" or subcmd == "" then
-    push.setup()
-  elseif subcmd == 'showconfig' then
-    push.showconfig()
-  elseif subcmd == "sync" then
-    local filepath = vim.api.nvim_buf_get_name(0)
-    if filepath == "" then
-      log.warn("No file to sync")
-      return
-    end
-    push.rsync_file(filepath)
-  else
-    log.warn("Usage: RemoteSync <setup|sync|showconfig> (default: setup)")
+  if subcmd == "" then
+    -- # do everything if nothing's specified
+    rsync.setup()
+    rsync.showconfig()
+    rsync.toggle_autocmd()
+    rsync.rsync_curr_file()
+    --
+  elseif subcmd == subcmds.setup then
+    -- # do only setup
+    rsync.setup()
+    rsync.showconfig()
+  elseif subcmd == subcmds.showconfig then
+    -- # show config
+    rsync.showconfig()
+  elseif subcmd == subcmds.sync then
+    -- # sync file
+    rsync.rsync_curr_file()
+  elseif subcmd == subcmds.toggle then
+    rsync.toggle_autocmd()
   end
-end, {
+end
+
+vim.api.nvim_create_user_command("RemoteSync", user_command, {
   desc = "remote-sync commands",
   nargs = "?",
   complete = function()
-    return { "setup", "sync", "showconfig" }
+    return { "setup", "sync", "showconfig", 'toggle' }
   end,
-})
-
-vim.api.nvim_create_autocmd("BufWritePost", {
-  group = vim.api.nvim_create_augroup("NvimPush", { clear = true }),
-  callback = function(args)
-    local filepath = vim.api.nvim_buf_get_name(args.buf)
-    if filepath == "" then
-      return
-    end
-    push.rsync_file(filepath)
-  end,
-  desc = "Rsync file on save",
 })
