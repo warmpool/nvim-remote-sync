@@ -13,10 +13,11 @@ function M.get_status()
   return state.status
 end
 
-function M.lualine_component()
+function M.lualine_component(prefix)
+  prefix = prefix or 'rs:'
   return function()
     local status = state.status
-    return "p:" .. status
+    return prefix .. status
   end
 end
 
