@@ -132,8 +132,9 @@ Logs are written to `vim.fn.stdpath("data")/remote-sync.log`.
 ## Related projects
 
 - [amitds1997/remote-nvim.nvim](https://github.com/amitds1997/remote-nvim.nvim)
-- [coffebar/transfer.nvim](https://github.com/coffebar/transfer.nvim)
+- [ayush-garg341/code_sync](https://github.com/ayush-garg341/code_sync)
 - [chipsenkbeil/distant.nvim](https://github.com/chipsenkbeil/distant.nvim)
+- [coffebar/transfer.nvim](https://github.com/coffebar/transfer.nvim)
 - [inhesrom/remote-ssh.nvim](https://github.com/inhesrom/remote-ssh.nvim)
 - [KenN7/vim-arsync](https://github.com/KenN7/vim-arsync)
 - [OscarCreator/rsync.nvim](https://github.com/OscarCreator/rsync.nvim)
